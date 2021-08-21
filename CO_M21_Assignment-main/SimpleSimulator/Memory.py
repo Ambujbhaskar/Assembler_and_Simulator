@@ -1,6 +1,4 @@
 
-
-
 class Memory:
     def __init__(self):
         y = bin(0).replace("0b", "")
@@ -9,12 +7,15 @@ class Memory:
             z = z + "0"
         z = z + y
         self.mem = [z] * 256
-        for x in range(0, 256):
-            inp = input()
-            if inp == "":
-                break
-            else:
-                self.mem[x] = inp
+        try:
+            for x in range(0, 256):
+                inp = input()
+                if inp == "":
+                    break
+                else:
+                    self.mem[x] = inp
+        except EOFError:
+            pass
 
     def binaryToDecimal(self,binary):
         binary = int(binary)
