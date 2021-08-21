@@ -1,9 +1,9 @@
 class executionengine():
-    def __init__(self,mem_,regfile):
+    def __init__(self, mem_, regfile):
         self.mem = mem_.mem
         self.reg = regfile.reg_file
 
-    def binaryToDecimal(self,binary):
+    def binaryToDecimal(self, binary):
         binary = int(binary)
         decimal, i, n = 0, 0, 0
         while (binary != 0):
@@ -13,10 +13,10 @@ class executionengine():
             i += 1
         return decimal
 
-    def decimaltobinary(self,no):
+    def decimaltobinary(self, no):
         y = bin(no).replace("0b", "")
         z = ""
-        if len(y)<=16:
+        if len(y) <= 16:
             for i in range(16 - len(y)):
                 z = z + "0"
             z = z + y
@@ -24,7 +24,7 @@ class executionengine():
             z = y
         return z
 
-    def reg_check(self,reg):
+    def reg_check(self, reg):
         if reg == "000":
             return 0
         elif reg == "001":
@@ -42,106 +42,236 @@ class executionengine():
         elif reg == "111":
             return 7
 
-    def add(self,reg1, reg2, reg3):
-        ind1 = executionengine.reg_check(self,reg1)
-        ind2 = executionengine.reg_check(self,reg2)
-        ind3 = executionengine.reg_check(self,reg3)
-        self.reg[ind1] = executionengine.decimaltobinary(self,(executionengine.binaryToDecimal(self,self.reg[ind2]) + executionengine.binaryToDecimal(self,self.reg[ind3])))
-        if len(self.reg[ind1]) > 16:
-            self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
-
-    def sub(self,reg1, reg2, reg3):
+    def add(self, reg1, reg2, reg3):
         ind1 = executionengine.reg_check(self, reg1)
         ind2 = executionengine.reg_check(self, reg2)
         ind3 = executionengine.reg_check(self, reg3)
-        if executionengine.binaryToDecimal(self,self.reg[ind3]) > executionengine.binaryToDecimal(self,self.reg[ind2]):
-            self.reg[ind1] = executionengine.decimaltobinary(self,0)
-        else:
-            self.reg[ind1] = executionengine.decimaltobinary(self, (executionengine.binaryToDecimal(self, self.reg[ind2]) - executionengine.binaryToDecimal(self,self.reg[ind3])))
+        self.reg[ind1] = executionengine.decimaltobinary(
+            self, (executionengine.binaryToDecimal(self, self.reg[ind2]) +
+                   executionengine.binaryToDecimal(self, self.reg[ind3])))
+        if len(self.reg[ind1]) > 16:
+            self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
 
-    def movimm(self,reg1,imm):
+    def sub(self, reg1, reg2, reg3):
+        ind1 = executionengine.reg_check(self, reg1)
+        ind2 = executionengine.reg_check(self, reg2)
+        ind3 = executionengine.reg_check(self, reg3)
+        if executionengine.binaryToDecimal(
+                self, self.reg[ind3]) > executionengine.binaryToDecimal(
+                    self, self.reg[ind2]):
+            self.reg[ind1] = executionengine.decimaltobinary(self, 0)
+        else:
+            self.reg[ind1] = executionengine.decimaltobinary(
+                self, (executionengine.binaryToDecimal(self, self.reg[ind2]) -
+                       executionengine.binaryToDecimal(self, self.reg[ind3])))
+
+    def movimm(self, reg1, imm):
         ind1 = executionengine.reg_check(self, reg1)
         self.reg[ind1] = "00000000" + imm
 
-    def movreg(self,reg1,reg2):
+    def movreg(self, reg1, reg2):
         ind1 = executionengine.reg_check(self, reg1)
         ind2 = executionengine.reg_check(self, reg2)
         self.reg[ind1] = self.reg[ind2]
 
-    def store(self,reg1,mem_add):
+    def movflag(self,reg1):
         ind1 = executionengine.reg_check(self, reg1)
-        for x in range(0,256):
-            if self.mem[x] == "0000000000000000":
-                self.mem[x] = self.reg[ind1]
-                break
+        self.reg[ind1] = self.reg[7]
+        if self.reg[7][12:13] == "1":
+            self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+        if self.reg[7][13:14] == "1":
+            self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+        if self.reg[7][14:15] == "1":
+            self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+        if self.reg[7][15:16] == "1":
+            self.reg[7] = self.reg[7][0:15] + "0"
 
-    def mul(self, reg1,reg2,reg3):
+    def load(self,reg1,var_pos):
+        ind1 = executionengine.reg_check(self, reg1)
+        var_pos_int = executionengine.binaryToDecimal(self, var_pos)
+        self.reg[ind1] = self.mem[var_pos_int]
+
+    def store(self, reg1, var_pos):
+        ind1 = executionengine.reg_check(self, reg1)
+        var_pos_int = executionengine.binaryToDecimal(self,var_pos)
+        self.mem[var_pos_int] = self.reg[ind1]
+
+
+    def mul(self, reg1, reg2, reg3):
         ind1 = executionengine.reg_check(self, reg1)
         ind2 = executionengine.reg_check(self, reg2)
         ind3 = executionengine.reg_check(self, reg3)
-        self.reg[ind1] = executionengine.decimaltobinary(self, (executionengine.binaryToDecimal(self, self.reg[ind2]) * executionengine.binaryToDecimal(self,self.reg[ind3])))
+        self.reg[ind1] = executionengine.decimaltobinary(
+            self, (executionengine.binaryToDecimal(self, self.reg[ind2]) *
+                   executionengine.binaryToDecimal(self, self.reg[ind3])))
         if len(self.reg[ind1]) > 16:
             self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
 
-    def div(self,reg1,reg2):
+    def div(self, reg1, reg2):
         ind1 = executionengine.reg_check(self, reg1)
         ind2 = executionengine.reg_check(self, reg2)
         self.reg[0] = self.reg[ind1] / self.reg[ind2]
         self.reg[1] = self.reg[ind1] % self.reg[ind2]
 
-    def rightshift(self,reg1, imm):
+    def rightshift(self, reg1, imm):
         ind1 = executionengine.reg_check(self, reg1)
-        reg_int = executionengine.binaryToDecimal(self,self.reg[ind1])
-        imm_int = executionengine.binaryToDecimal(self,imm)
+        reg_int = executionengine.binaryToDecimal(self, self.reg[ind1])
+        imm_int = executionengine.binaryToDecimal(self, imm)
         shift_right = reg_int >> imm_int
-        self.reg[ind1] = executionengine.decimaltobinary(self,shift_right)
-        
-    def leftshift(self,reg1, imm):
+        self.reg[ind1] = executionengine.decimaltobinary(self, shift_right)
+
+    def leftshift(self, reg1, imm):
         ind1 = executionengine.reg_check(self, reg1)
         reg_int = executionengine.binaryToDecimal(self, self.reg[ind1])
         imm_int = executionengine.binaryToDecimal(self, imm)
         shift_left = reg_int << imm_int
         self.reg[ind1] = executionengine.decimaltobinary(self, shift_left)
 
-    def execute(self,inst,cycle):
+    def xoro(self, reg1, reg2, reg3):
+        ind1 = executionengine.reg_check(self, reg1)
+        ind2 = executionengine.reg_check(self, reg2)
+        ind3 = executionengine.reg_check(self, reg3)
+        reg_int1 = executionengine.binaryToDecimal(self, self.reg[ind1])
+        reg_int2 = executionengine.binaryToDecimal(self, self.reg[ind2])
+        reg_int3 = executionengine.binaryToDecimal(self, self.reg[ind3])
+        xor_op = reg_int2 ^ reg_int3
+        self.reg[ind1] = executionengine.decimaltobinary(self, xor_op)
+
+    def oro(self, reg1, reg2, reg3):
+        ind1 = executionengine.reg_check(self, reg1)
+        ind2 = executionengine.reg_check(self, reg2)
+        ind3 = executionengine.reg_check(self, reg3)
+        reg_int1 = executionengine.binaryToDecimal(self, self.reg[ind1])
+        reg_int2 = executionengine.binaryToDecimal(self, self.reg[ind2])
+        reg_int3 = executionengine.binaryToDecimal(self, self.reg[ind3])
+        or_op = reg_int2 | reg_int3
+        self.reg[ind1] = executionengine.decimaltobinary(self, or_op)
+
+    def ando(self, reg1, reg2, reg3):
+        ind1 = executionengine.reg_check(self, reg1)
+        ind2 = executionengine.reg_check(self, reg2)
+        ind3 = executionengine.reg_check(self, reg3)
+        reg_int1 = executionengine.binaryToDecimal(self, self.reg[ind1])
+        reg_int2 = executionengine.binaryToDecimal(self, self.reg[ind2])
+        reg_int3 = executionengine.binaryToDecimal(self, self.reg[ind3])
+        and_op = reg_int2 & reg_int3
+        self.reg[ind1] = executionengine.decimaltobinary(self, and_op)
+
+    def inverto(self, reg1, reg2):
+        ind1 = executionengine.reg_check(self, reg1)
+        ind2 = executionengine.reg_check(self, reg2)
+        reg_int1 = executionengine.binaryToDecimal(self, self.reg[ind1])
+        reg_int2 = executionengine.binaryToDecimal(self, self.reg[ind2])
+        inv_op = ~reg_int2
+        self.reg[ind1] = executionengine.decimaltobinary(self, inv_op)
+
+    def comparo(self, reg1, reg2):
+        ind1 = executionengine.reg_check(self, reg1)
+        ind2 = executionengine.reg_check(self, reg2)
+        reg_int1 = executionengine.binaryToDecimal(self, self.reg[ind1])
+        reg_int2 = executionengine.binaryToDecimal(self, self.reg[ind2])
+        if reg_int1 == reg_int2:
+            self.reg[7] = self.reg[7][:15] + "1" + self.reg[7][16:16]
+        elif reg_int1 > reg_int2:
+            self.reg[7] = self.reg[7][:14] + "1" + self.reg[7][15:16]
+        else:
+            self.reg[7] = self.reg[7][:13] + "1" + self.reg[7][14:16]
+
+    def jgt(self):
+        if self.reg[7][14:15] == "1":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
+            return True
+        else:
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
+            return False
+
+    def execute(self, inst, cycle, PC):
         opcode = inst[0:5]
+        PC_int = executionengine.binaryToDecimal(self, PC)
         if opcode == "00000":
-            executionengine.add(self,inst[7:10], inst[10:13], inst[13:16])
-            return False, 1
+            executionengine.add(self, inst[7:10], inst[10:13], inst[13:16])
+            return False, PC_int+1
 
         if opcode == "00001":
             executionengine.sub(self, inst[7:10], inst[10:13], inst[13:16])
-            return False, 1
+            return False, PC_int+1
 
         if opcode == "00010":
-            executionengine.movimm(self,inst[5:8],inst[8:16])
-            return False, 1
+            executionengine.movimm(self, inst[5:8], inst[8:16])
+            return False, PC_int+1
 
         if opcode == "00011":
-            executionengine.movreg(self,inst[10:13], inst[13:16])
-            return False, 1
+            if inst[13:16] == "111":
+                executionengine.movflag(self,inst[10:13])
+                return False, PC_int+1
+            else:
+                executionengine.movreg(self, inst[10:13], inst[13:16])
+                return False, PC_int+1
+
+        if opcode == "00100":
+            executionengine.load(self, inst[5:8], inst[8:16])
+            return False, PC_int+1
 
         if opcode == "00101":
-            executionengine.store(self,inst[5:8],inst[8:16])
-            return False, 1
+            executionengine.store(self, inst[5:8], inst[8:16])
+            return False, PC_int+1
 
         if opcode == "00110":
-            executionengine.mul(self,inst[7:10], inst[10:13], inst[13:16])
-            return False, 1
+            executionengine.mul(self, inst[7:10], inst[10:13], inst[13:16])
+            return False, PC_int+1
 
         if opcode == "00111":
-            executionengine.div(self,inst[10:13], inst[13:16])
-            return False, 1
+            executionengine.div(self, inst[10:13], inst[13:16])
+            return False, PC_int+1
 
         if opcode == "01000":
-            executionengine.rightshift(self,inst[5:8],inst[8:16])
-            return False, 1
+            executionengine.rightshift(self, inst[5:8], inst[8:16])
+            return False, PC_int+1
 
         if opcode == "01001":
-            executionengine.leftshift(self,inst[5:8],inst[8:16])
-            return False, 1
+            executionengine.leftshift(self, inst[5:8], inst[8:16])
+            return False, PC_int+1
+
+        if opcode == "01010":
+            executionengine.xoro(self, inst[7:10], inst[10:13], inst[13:16])
+            return False, PC_int+1
+
+        if opcode == "01011":
+            executionengine.oro(self, inst[7:10], inst[10:13], inst[13:16])
+            return False, PC_int+1
+
+        if opcode == "01100":
+            executionengine.ando(self, inst[7:10], inst[10:13], inst[13:16])
+            return False, PC_int+1
+
+        if opcode == "01101":
+            executionengine.inverto(self, inst[10:13], inst[13:16])
+            return False, PC_int+1
+        if opcode == "01110":
+            executionengine.comparo(self, inst[10:13], inst[13:16])
+            return False, PC_int+1
+
+        if opcode == "10001":
+            check_flag_gt = executionengine.jgt(self)
+            if check_flag_gt:
+                convert_decimal = executionengine.binaryToDecimal(self, inst[8:16])
+                return False, convert_decimal
+            else:
+                return False, PC_int+1
 
         if opcode == "10011":
-            return True, 0
-
-
+            return True, PC_int
