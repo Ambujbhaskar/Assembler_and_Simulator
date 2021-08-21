@@ -14,11 +14,11 @@ def main():
 
     while not halted:
         inst = memory.fetch(PC.getVal(), cycle)# it will fetch the instruction depending upon fetching PC value.
-        halted, nextPC = executionEngine.execute(inst, cycle) # it will execute instruction and update the register_file.
+        halted, nextPC = executionEngine.execute(inst, cycle, PC.PC) # it will execute instruction and update the register_file.
         pc_print = PC.dump()
         reg_print = registerFile.dump()
         print(pc_print + " " + reg_print)
-        PC.update(nextPC) # it might be +1 or not depending upon jump instruction used or not.
+        PC.update(nextPC) # it might be +1 or not, depending upon jump instruction used or not.
         cycle += 1
 
     memory.dump()
