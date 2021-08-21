@@ -99,8 +99,11 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
     ret = []
     for i in range(len(instructions)):
         if first_instruction == instructions[i]:
-            if i == 1 or i == 2 or i == 6 or i == 10 or i == 11 or i == 12:
+
+
+            if i == 1 or i == 2 or i == 6 or i == 10 or i == 11 or i == 12:     # "add", "sub", "mul", "xor", "or", "and"
                 # type A
+                # error handling
                 if len(ins_line) != 4:
                     if len(ins_line) >4:
                         errors[-1][0] = True
@@ -132,6 +135,7 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                                     errors[-1][0] = True
                             else:
                                 errors[9][0] = True
+                # assembling
                 else:
                     ret.append(opcode(ins_line, instructions, errors))
                     ret.append("00")
@@ -151,7 +155,9 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                     else:
                         errors[3][0] = True
                 return "".join(ret)
-            elif i == 8 or i == 9:
+
+
+            elif i == 8 or i == 9:      # "rs", "ls"
                 # type B
                 ret.append(opcode(ins_line, instructions, errors))
                 if len(ins_line) == 3:
@@ -178,7 +184,6 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                                                 errors[9][0] = True
                                         if checker:
                                             errors[-1][0] = True
-
                             else:
                                 errors[0][0] = True
                         else:
@@ -214,7 +219,9 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                         else:
                             errors[9][0] = True
                 return "".join(ret)
-            elif i == 3:
+
+
+            elif i == 3:        # "mov"
                 # mov instr (type B and C)
                 ret.append(opcode(ins_line, instructions, errors))
                 if len(ins_line) == 3:
@@ -296,7 +303,9 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                             errors[9][0] = True
                 # print(ret)
                 return "".join(ret)
-            elif i == 7 or i == 13 or i == 14:
+
+
+            elif i == 7 or i == 13 or i == 14:      # "div", "not", "cmp"
                 # type C (except mul)
                 ret.append(opcode(ins_line, instructions, errors))
                 ret.append("00000")
@@ -361,7 +370,9 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                         else:
                             errors[9][0] = True
                 return "".join(ret)
-            elif i == 4 or i == 5:
+
+
+            elif i == 4 or i == 5:      # "ld", "st"
                 # type D
                 ret.append(opcode(ins_line, instructions, errors))
                 if len(ins_line) == 3:
@@ -420,7 +431,9 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                         else:
                             errors[9][0] = True
                 return "".join(ret)
-            elif i == 15 or i == 16 or i == 17 or i == 18:
+
+
+            elif i == 15 or i == 16 or i == 17 or i == 18:      # "jmp", "jlt", "jgt", "je"
                 # type E
                 ret.append(opcode(ins_line, instructions, errors))
                 ret.append("000")
@@ -471,6 +484,8 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                             errors[9][0] = True
 
                 return "".join(ret)
+
+
             elif i == 0:
                 # type F
                 if len(ins_line) == 1:
@@ -514,6 +529,7 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
                             if flag:
                                 errors[-1][0] = True
                 return "".join(ret)
+
     # no type (error gen)
     errors[-1][0] = True
     return "".join(ret)
@@ -525,39 +541,46 @@ def main():
     variables = []
     instructions = ["hlt", "add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls", "xor", "or", "and", "not", "cmp",
                     "jmp", "jlt", "jgt", "je"]
-    errors = [[False, "Error: Typos in instruction name or register name"],  # A -0
-              [False, "Error: Use of undefined variables"],  # B -1
-              [False, "Error: Use of undefined labels"],  # C -2
-              [False, "Error: Illegal use of FLAGS register"],  # D -3
-              [False, "Error: Illegal Immediate values (less than 0 or more than 255)"],  # E -4
-              [False, "Error: Misuse of labels as variables or vice-versa"],  # F -5
-              [False, "Error: Variables not declared at the beginning"],  # G -6
-              [False, "Error: Missing hlt instruction"],  # H -7
-              [False, "Error: hlt not being used as the last instruction"],  # I -8
-              [False, "Error: Wrong syntax used for instructions"],  # J -9
+    errors = [[False, "Typos in instruction name or register name"],  # A -0
+              [False, "Use of undefined variables"],  # B -1
+              [False, "Use of undefined labels"],  # C -2
+              [False, "Illegal use of FLAGS register"],  # D -3
+              [False, "Illegal Immediate values (less than 0 or more than 255)"],  # E -4
+              [False, "Misuse of labels as variables or vice-versa"],  # F -5
+              [False, "Variables not declared at the beginning"],  # G -6
+              [False, "Missing hlt instruction"],  # H -7
+              [False, "hlt not being used as the last instruction"],  # I -8
+              [False, "Wrong syntax used for instructions"],  # J -9
               [False, "General syntax Error"]]  # K -10
     reg_mem = [-1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0]  # r0 to r6 and FLAGS
     input_valid_lists = []
     nonvarcount = 0
     count_hlt = 0
     after_hlt = 0
+    input_line_num = 0
     # taking and storing the input
     try:
         while True:
             rawline = input()
+            input_line_num+=1
+
             if rawline == "":
                 continue  # skip to next line input if input is empty
+
             line = rawline.rstrip().lstrip().split()
+
             if line[0] != "var":
                 if after_hlt >=1:
                     after_hlt +=1
                 nonvarcount += 1
+
             if nonvarcount > 0:
                 if line[0] == "var":
                     if len(line) == 2:
                         errors[6][0] = True
                     else:
                         errors[9][0] = True
+
             if line[0][-1] == ":":  # label
                 if len(line)>1:
                     if line[1] == "hlt":
@@ -566,13 +589,15 @@ def main():
                         labels.append([line[0][:-1], nonvarcount-1])
                     else:
                         labels.append([line[0][:-1], nonvarcount - 1])
-            input_valid_lists.append(line)
+
+            input_valid_lists.append([line, input_line_num])
             if line[0] == "hlt":
                 after_hlt = 1
                 count_hlt += 1
-    except EOFError:  # end of input, output is printed
+
+    except EOFError:  # end of input
         pass
-    # print(input_valid_lists)
+
     # assembling the input
     count = 0
     result = []
@@ -583,11 +608,15 @@ def main():
         errors[7][0] = True
     if after_hlt >1:
         errors[8][0] = True
+
     check_var_label_name = "^[A-Za-z0-9_]*$"
+
     try:
         while linecount < len(input_valid_lists):
-            line = input_valid_lists[linecount]
+            line = input_valid_lists[linecount][0]
+            inputlinenumber = input_valid_lists[linecount][1]
             firstword = line[0]
+
             if firstword == "var":  # variable declaration
                 if len(line) == 2:
                     if bool(re.match(check_var_label_name, line[1])):
@@ -596,6 +625,7 @@ def main():
                         errors[10][0] = True
                 else:
                     errors[10][0] = True
+
             elif firstword[-1] == ":":  # label
                 if bool(re.match(check_var_label_name, firstword[:-1])):
                     labels.append([firstword[:-1], count])
@@ -604,17 +634,21 @@ def main():
                     count += 1
                 else:
                     errors[10][0] = True
+
             else:  # instructions
                 result.append(instruction_flow(line, instructions, errors, variables, labels, nonvarcount))
                 count += 1
+
             # print(errors)
             # print(count)
             # print(result)
+
             for err in errors:  # error gen
                 if err[0]:
-                    result = [err[1]]
+                    result = ["Error: line ", str(inputlinenumber)," ", err[1]]
                     assert False
             linecount += 1
+            
         print("\n".join(result))
     except AssertionError:
         print("".join(result))
