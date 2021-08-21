@@ -22,9 +22,4 @@ class programcounter():
         return self.PC
 
     def update(self, next):
-        next_bin = bin(next).replace("0b", "")
-        next_final = ""
-        for i in range(8 - len(next_bin)):
-            next_final = next_final + "0"
-        next_final = next_final + next_bin
-        self.PC = programcounter.decimaltobinary(self, (int(self.PC,2) + int(next_final,2)))
+        self.PC = programcounter.decimaltobinary(self,next)
