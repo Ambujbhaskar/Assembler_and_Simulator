@@ -628,7 +628,7 @@ def main():
 
             elif firstword[-1] == ":":  # label
                 if bool(re.match(check_var_label_name, firstword[:-1])):
-                    labels.append([firstword[:-1], count])
+                    # labels.append([firstword[:-1], count])
                     line.pop(0)
                     result.append(instruction_flow(line, instructions, errors, variables, labels, nonvarcount))
                     count += 1
