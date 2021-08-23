@@ -109,8 +109,9 @@ class executionengine():
     def div(self, reg1, reg2):
         ind1 = executionengine.reg_check(self, reg1)
         ind2 = executionengine.reg_check(self, reg2)
-        self.reg[0] = self.reg[ind1] / self.reg[ind2]
-        self.reg[1] = self.reg[ind1] % self.reg[ind2]
+        self.reg[0] = executionengine.decimaltobinary(self,int(executionengine.binaryToDecimal(self,self.reg[ind1]) / executionengine.binaryToDecimal(self,self.reg[ind2])))
+        self.reg[1] = executionengine.decimaltobinary(self,executionengine.binaryToDecimal(self,self.reg[ind1]) % executionengine.binaryToDecimal(self,self.reg[ind2]))
+
 
     def rightshift(self, reg1, imm):
         ind1 = executionengine.reg_check(self, reg1)
