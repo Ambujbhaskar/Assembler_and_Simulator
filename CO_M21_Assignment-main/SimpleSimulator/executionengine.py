@@ -50,6 +50,7 @@ class executionengine():
             self, (executionengine.binaryToDecimal(self, self.reg[ind2]) +
                    executionengine.binaryToDecimal(self, self.reg[ind3])))
         if len(self.reg[ind1]) > 16:
+            self.reg[ind1] = self.reg[ind1][len(self.reg[ind1])-16:16]
             self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
 
     def sub(self, reg1, reg2, reg3):
@@ -104,6 +105,7 @@ class executionengine():
             self, (executionengine.binaryToDecimal(self, self.reg[ind2]) *
                    executionengine.binaryToDecimal(self, self.reg[ind3])))
         if len(self.reg[ind1]) > 16:
+            self.reg[ind1] = self.reg[ind1][len(self.reg[ind1]) - 16:16]
             self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
 
     def div(self, reg1, reg2):
@@ -160,10 +162,11 @@ class executionengine():
     def inverto(self, reg1, reg2):
         ind1 = executionengine.reg_check(self, reg1)
         ind2 = executionengine.reg_check(self, reg2)
-        reg_int1 = executionengine.binaryToDecimal(self, self.reg[ind1])
-        reg_int2 = executionengine.binaryToDecimal(self, self.reg[ind2])
-        inv_op = ~reg_int2
-        self.reg[ind1] = executionengine.decimaltobinary(self, inv_op)
+        number = self.reg[ind2]
+        inverse = number.replace('1', '2')
+        inverse = inverse.replace('0', '1')
+        inverse = inverse.replace('2', '0')
+        self.reg[ind1] = inverse
 
     def comparo(self, reg1, reg2):
         ind1 = executionengine.reg_check(self, reg1)
