@@ -26,7 +26,7 @@ def main():
         cycle += 1
 
     memory.dump()
-    plt.scatter(PClst, cyclelst)
+    plt.scatter(cyclelst, PClst)
     plt.show()
     plt.savefig("plot.png")
     # memory.showTraces()  # at what cycle we are using what memory location
