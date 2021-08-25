@@ -18,7 +18,7 @@ def main():
         inst = memory.fetch(PC.getVal(), cycle)     # it will fetch the instruction depending upon fetching PC value.
         halted, nextPC = executionEngine.execute(inst, cycle, PC.PC)    # it will execute instruction and update the register_file.
         PClst.append(getVal)        # for plot
-        cyclelst.append(cycle+1)    # for plot
+        cyclelst.append(cycle)    # for plot
         pc_print = PC.dump()
         reg_print = registerFile.dump()
         print(pc_print + " " + reg_print)
