@@ -50,7 +50,8 @@ class executionengine():
             self, (executionengine.binaryToDecimal(self, self.reg[ind2]) +
                    executionengine.binaryToDecimal(self, self.reg[ind3])))
         if len(self.reg[ind1]) > 16:
-            self.reg[ind1] = self.reg[ind1][len(self.reg[ind1])-16:16]
+            length_reg = len(self.reg[ind1])
+            self.reg[ind1] = self.reg[ind1][len(self.reg[ind1])-16:length_reg]
             self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
 
     def sub(self, reg1, reg2, reg3):
@@ -61,6 +62,7 @@ class executionengine():
                 self, self.reg[ind3]) > executionengine.binaryToDecimal(
                     self, self.reg[ind2]):
             self.reg[ind1] = executionengine.decimaltobinary(self, 0)
+            self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
         else:
             self.reg[ind1] = executionengine.decimaltobinary(
                 self, (executionengine.binaryToDecimal(self, self.reg[ind2]) -
@@ -105,7 +107,8 @@ class executionengine():
             self, (executionengine.binaryToDecimal(self, self.reg[ind2]) *
                    executionengine.binaryToDecimal(self, self.reg[ind3])))
         if len(self.reg[ind1]) > 16:
-            self.reg[ind1] = self.reg[ind1][len(self.reg[ind1]) - 16:16]
+            length_reg = len(self.reg[ind1])
+            self.reg[ind1] = self.reg[ind1][len(self.reg[ind1]) - 16:length_reg]
             self.reg[7] = self.reg[7][:12] + "1" + self.reg[7][13:16]
 
     def div(self, reg1, reg2):
@@ -185,141 +188,228 @@ class executionengine():
 
     def jlt(self):
         if self.reg[7][13:14] == "1":
-            if self.reg[7][12:13] == "1":
-                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
-            if self.reg[7][13:14] == "1":
-                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
-            if self.reg[7][14:15] == "1":
-                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
-            if self.reg[7][15:16] == "1":
-                self.reg[7] = self.reg[7][0:15] + "0"
             return True
         else:
-            if self.reg[7][12:13] == "1":
-                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
-            if self.reg[7][13:14] == "1":
-                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
-            if self.reg[7][14:15] == "1":
-                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
-            if self.reg[7][15:16] == "1":
-                self.reg[7] = self.reg[7][0:15] + "0"
             return False
 
     def jgt(self):
         if self.reg[7][14:15] == "1":
-            if self.reg[7][12:13] == "1":
-                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
-            if self.reg[7][13:14] == "1":
-                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
-            if self.reg[7][14:15] == "1":
-                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
-            if self.reg[7][15:16] == "1":
-                self.reg[7] = self.reg[7][0:15] + "0"
             return True
         else:
-            if self.reg[7][12:13] == "1":
-                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
-            if self.reg[7][13:14] == "1":
-                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
-            if self.reg[7][14:15] == "1":
-                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
-            if self.reg[7][15:16] == "1":
-                self.reg[7] = self.reg[7][0:15] + "0"
             return False
 
     def je(self):
         if self.reg[7][15:16] == "1":
-            if self.reg[7][12:13] == "1":
-                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
-            if self.reg[7][13:14] == "1":
-                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
-            if self.reg[7][14:15] == "1":
-                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
-            if self.reg[7][15:16] == "1":
-                self.reg[7] = self.reg[7][0:15] + "0"
             return True
         else:
-            if self.reg[7][12:13] == "1":
-                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
-            if self.reg[7][13:14] == "1":
-                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
-            if self.reg[7][14:15] == "1":
-                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
-            if self.reg[7][15:16] == "1":
-                self.reg[7] = self.reg[7][0:15] + "0"
             return False
 
     def execute(self, inst, cycle, PC):
         opcode = inst[0:5]
         PC_int = executionengine.binaryToDecimal(self, PC)
         if opcode == "00000":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.add(self, inst[7:10], inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "00001":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.sub(self, inst[7:10], inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "00010":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.movimm(self, inst[5:8], inst[8:16])
             return False, PC_int + 1
 
         if opcode == "00011":
             if inst[13:16] == "111":
                 executionengine.movflag(self, inst[10:13])
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, PC_int + 1
             else:
                 executionengine.movreg(self, inst[10:13], inst[13:16])
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, PC_int + 1
 
         if opcode == "00100":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.load(self, inst[5:8], inst[8:16])
             return False, PC_int + 1
 
         if opcode == "00101":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.store(self, inst[5:8], inst[8:16])
             return False, PC_int + 1
 
         if opcode == "00110":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.mul(self, inst[7:10], inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "00111":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.div(self, inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "01000":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.rightshift(self, inst[5:8], inst[8:16])
             return False, PC_int + 1
 
         if opcode == "01001":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.leftshift(self, inst[5:8], inst[8:16])
             return False, PC_int + 1
 
         if opcode == "01010":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.xoro(self, inst[7:10], inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "01011":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.oro(self, inst[7:10], inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "01100":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.ando(self, inst[7:10], inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "01101":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.inverto(self, inst[10:13], inst[13:16])
             return False, PC_int + 1
         if opcode == "01110":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             executionengine.comparo(self, inst[10:13], inst[13:16])
             return False, PC_int + 1
 
         if opcode == "01111":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             check = executionengine.jmp(self)
             if check:
-                convert_decimal = executionengine.binaryToDecimal(
-                    self, inst[8:16])
+                convert_decimal = executionengine.binaryToDecimal(self, inst[8:16])
                 return False, convert_decimal
 
         if opcode == "10000":
@@ -327,8 +417,24 @@ class executionengine():
             if check_flag_lt:
                 convert_decimal = executionengine.binaryToDecimal(
                     self, inst[8:16])
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, convert_decimal
             else:
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, PC_int + 1
 
         if opcode == "10001":
@@ -336,8 +442,24 @@ class executionengine():
             if check_flag_gt:
                 convert_decimal = executionengine.binaryToDecimal(
                     self, inst[8:16])
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, convert_decimal
             else:
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, PC_int + 1
 
         if opcode == "10010":
@@ -345,9 +467,33 @@ class executionengine():
             if check_flag_eq:
                 convert_decimal = executionengine.binaryToDecimal(
                     self, inst[8:16])
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, convert_decimal
             else:
+                if self.reg[7][12:13] == "1":
+                    self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+                if self.reg[7][13:14] == "1":
+                    self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+                if self.reg[7][14:15] == "1":
+                    self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+                if self.reg[7][15:16] == "1":
+                    self.reg[7] = self.reg[7][0:15] + "0"
                 return False, PC_int + 1
 
         if opcode == "10011":
+            if self.reg[7][12:13] == "1":
+                self.reg[7] = self.reg[7][0:12] + "0" + self.reg[7][13:16]
+            if self.reg[7][13:14] == "1":
+                self.reg[7] = self.reg[7][0:13] + "0" + self.reg[7][14:16]
+            if self.reg[7][14:15] == "1":
+                self.reg[7] = self.reg[7][0:14] + "0" + self.reg[7][15:16]
+            if self.reg[7][15:16] == "1":
+                self.reg[7] = self.reg[7][0:15] + "0"
             return True, PC_int
