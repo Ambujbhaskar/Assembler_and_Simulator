@@ -747,6 +747,8 @@ def main():
                 if k == 0:
                     int_hlt = input_line_num
                     k += 1
+                if after_hlt >= 1:
+                    after_hlt_query += 1
                 hlt_no = input_line_num
                 after_hlt = 1
                 count_hlt += 1
@@ -767,7 +769,7 @@ def main():
         errors[7][2].append(input_line_num)
     if hlt_no != input_line_num:
         errors[8][0] = True
-        errors[8][2].append(input_line_num - after_hlt_query)
+        errors[8][2].append(input_line_num - after_hlt_query+1)
     check_var_label_name = "^[A-Za-z0-9_]*$"
 
     try:
