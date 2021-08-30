@@ -1,9 +1,9 @@
 import re
 
 
-
 def num_to_8bit(integer):
-    y = bin(integer).replace("0b", "")
+    # y = bin(integer).replace("0b", "") O(n^2) using strip fxn it will be reduced to O(N*(length of "0b"))
+    y = bin(integer).strip("0b")
     z = []
     for i in range(8 - len(y)):
         z.append("0")
@@ -12,8 +12,6 @@ def num_to_8bit(integer):
 
 
 def reg_bin(num, inslst, erdic):
-    instructions = inslst
-    errors = erdic
     if num == "0":
         return "000"
     elif num == "1":
@@ -34,7 +32,6 @@ def reg_bin(num, inslst, erdic):
 
 def opcode(line, inslst, erdic):
     fw = line[0]
-    instructions = inslst
     errors = erdic
     if fw == "hlt":
         return "10011"
@@ -672,7 +669,6 @@ def instruction_flow(ins_line, inslst, erdic, varlst, labeldic, countpar):
 
 
 def main():
-    memory_array = []
     labels = []
     variables = []
     instructions = ["hlt", "add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls", "xor", "or", "and", "not", "cmp",
@@ -693,7 +689,6 @@ def main():
     count_hlt = 0
     after_hlt = 0
     input_line_num = 0
-    count_hlt_no = 0
     after_hlt_query = 0
     hlt_no = 0
     int_hlt = 0
@@ -735,7 +730,6 @@ def main():
                         hlt_no = input_line_num
                         after_hlt = 1
                         count_hlt += 1
-                        count_hlt_no = input_line_num
                         labels.append([line[0][:-1], nonvarcount - 1])
                     else:
                         if after_hlt >= 1:
@@ -752,7 +746,6 @@ def main():
                 hlt_no = input_line_num
                 after_hlt = 1
                 count_hlt += 1
-                count_hlt_no = input_line_num
 
     except EOFError:  # end of input
         pass
@@ -769,7 +762,7 @@ def main():
         errors[7][2].append(input_line_num)
     if hlt_no != input_line_num:
         errors[8][0] = True
-        errors[8][2].append(input_line_num - after_hlt_query+1)
+        errors[8][2].append(input_line_num - after_hlt_query + 1)
     check_var_label_name = "^[A-Za-z0-9_]*$"
 
     try:
@@ -825,4 +818,8 @@ def main():
         print("".join(result))
 
 
-main()
+def main2():
+    print(num_to_8bit(6990))
+
+
+main2()
