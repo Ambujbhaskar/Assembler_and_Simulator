@@ -818,8 +818,4 @@ def main():
         print("".join(result))
 
 
-def main2():
-    print(num_to_8bit(6990))
-
-
-main2()
+main()
