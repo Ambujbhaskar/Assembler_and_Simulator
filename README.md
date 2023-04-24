@@ -1,5 +1,5 @@
 # Assembler_and_Simulator
-A group project for Computer Organization assignment 2021.
+Group project for Computer Organization (CO) 2021.
 The ISA for the Assembler and the Simulator is given in Assignment.pdf
 
 ## How to Run -
